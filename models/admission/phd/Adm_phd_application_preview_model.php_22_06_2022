@@ -1,0 +1,207 @@
+<?php
+
+class Adm_phd_application_preview_model extends CI_Model
+{
+
+    function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function get_application_details($registration_no)
+    {
+        $query = $this->db->query("select * from adm_phd_appl_ms where registration_no ='" . $registration_no . "'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    public function get_address($registration_no)
+    {
+        $query = $this->db->query("select * from adm_phd_address where address_type='C' and registration_no ='" . $registration_no . "'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    public function get_fellowship_details($registration_no)
+    {
+        $query = $this->db->query("select * from adm_phd_fellowship where registration_no ='" . $registration_no . "'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    public function insert_document_log($data)
+    {
+
+      $cond=array(
+        'registration_no' =>$data['registration_no'],
+        'doc_id' =>$data['doc_id'],
+      );
+
+      $myquery = "SELECT * FROM adm_phd_doc d WHERE d.registration_no='".$data['registration_no']."' AND d.doc_id='".$data['doc_id']."' ";
+      $query = $this->db->query($myquery);
+      if ($query)
+      {
+         $p=$query->result();
+         $document=array(
+          'registration_no'=>$data['registration_no'],
+          'doc_id'=>$data['doc_id'],
+          'doc_path'=>$p[0]->doc_path,
+          'previous_created_by'=>$p[0]->created_by,
+          'previous_created_date'=>$p[0]->created_date,
+        );
+        $query=$this->db->insert('adm_admin_phd_doc_edit_log',$document);
+        //echo $this->db2->last_query(); die();
+      }
+
+      else
+      {
+        return false;
+      }
+
+    }
+
+    public function get_program_desc($program_id)
+    {
+        $query = $this->db->query("select program_desc from adm_phd_program_ms where program_id ='" . $program_id . "'");
+        if ($query->num_rows() > 0)
+        {
+            return $query->result()[0]->program_desc;
+        }
+
+        else
+            return false;
+    }
+
+    public function get_qulaification_details($registration_no)
+    {
+        $query = $this->db->query("select * from adm_phd_qulaification where registration_no ='" . $registration_no . "'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+
+    public function get_program_details($registration_no)
+    {
+        $query = $this->db->query("select p.*, d.degree_desc from adm_phd_reg_appl_program p
+        inner join adm_phd_degree_ms d
+        where p.degree_id = d.degree_code and registration_no ='" . $registration_no . "'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    public function get_work_exp_details($registration_no)
+    {
+        $query = $this->db->query("select * from adm_phd_work_exp where registration_no ='" . $registration_no . "'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    public function get_photo_path($registration_no)
+    {
+        $query = $this->db->query("select * from adm_phd_doc where registration_no ='" . $registration_no . "' and doc_id='photo'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    public function get_sign_path($registration_no)
+    {
+        $query = $this->db->query("select * from adm_phd_doc where registration_no ='" . $registration_no . "' and doc_id='signature'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    public function get_qrcode_path($registration_no)
+    {
+        $query = $this->db->query("select doc_path from adm_phd_doc where registration_no ='" . $registration_no . "' and doc_id='qrcode'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    // public function insert_qrcode($email, $registration_no)
+    // {
+    //     $now = date('Y-m-d H:i:s');
+    //     $stmt = "INSERT INTO `adm_phd_doc` (`registration_no`, `doc_id`, `doc_path`, `uploaded_date`, `created_by`)
+    //         VALUES
+    //         ('$registration_no','qrcode', 'assets/admission/phd/$registration_no/qrcode$registration_no.png','$now','$email')";
+    //     $query = $this->db->query($stmt);
+    //     if ($query) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+
+    public function insert_qrcode($email, $registration_no)
+    {
+
+        $now = date('Y-m-d H:i:s');
+        $myquery = "SELECT * FROM adm_phd_doc d WHERE d.registration_no='".$registration_no."' AND d.doc_id='qrcode' ";
+        $query = $this->db->query($myquery);
+        if ($query)
+        {
+          $this->db->where('registration_no', $registration_no);
+          $this->db->where('doc_id', 'qrcode');
+          $this->db->delete('adm_phd_doc');
+          $stmt = "INSERT INTO `adm_phd_doc` (`registration_no`, `doc_id`, `doc_path`, `uploaded_date`, `created_by`)
+              VALUES
+              ('$registration_no','qrcode', 'assets/admission/phd/$registration_no/qrcode$registration_no.png','$now','$email')";
+          $query = $this->db->query($stmt);
+          if ($query) {
+              return true;
+          } else {
+              return false;
+          }
+
+        }
+        else {
+
+        $stmt = "INSERT INTO `adm_phd_doc` (`registration_no`, `doc_id`, `doc_path`, `uploaded_date`, `created_by`)
+            VALUES
+            ('$registration_no','qrcode', 'assets/admission/phd/$registration_no/qrcode$registration_no.png','$now','$email')";
+        $query = $this->db->query($stmt);
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+      }
+    }
+
+    public function get_tab_status($registration_no)
+    {
+        $query = $this->db->query("select * from adm_phd_tab where registration_no ='" . $registration_no . "'");
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+
+    public function get_doc_path($registration_no)
+    {
+
+        $query = $this->db->query("select d.*, m.description from adm_phd_doc d inner join adm_phd_doc_ms m
+            where d.registration_no ='" . $registration_no . "' and d.doc_id = m.doc_id ORDER BY m.id" );
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+}

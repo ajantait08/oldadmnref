@@ -1,0 +1,202 @@
+<?php defined('BASEPATH') or exit('No direct script access allowed');
+
+class Adm_mtech_application_preview extends MY_Controller
+{
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->helper(array('dompdf', 'file'));
+        $this->load->model('admission/mtech/Adm_mtech_application_preview_model', 'Mtech_all', TRUE);
+    }
+
+    function index()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Mtech'))
+        {
+            $data['val'] = "home";
+            $data['application'] = $this->Mtech_all->get_application_details($registration_no);
+            $data['program'] = $this->Mtech_all->get_program_details($registration_no);
+            $data['tab_stat'] = $this->Mtech_all->get_tab_status($registration_no);
+            // echo "<pre>";
+            // print_r($data);
+            // exit;
+            $this->adm_mtech_header($data);
+            if ($data['application'][0]->payment_status == 'Y') {
+                $this->load->view('admission/mtech/adm_mtech_status_dashboard', $data);
+                $this->session->set_userdata('unset_userdata','doc_start');
+                $this->session->set_userdata('unset_userdata','pay_start');
+            } else {
+              
+                redirect('admission/mtech/Adm_mtech_user_dashboard');
+            }
+            // $this->adm_mtech_footer();
+        } 
+        else {
+            redirect('admission/mtech/Adm_mtech_registration/logout');
+        }
+    }
+
+
+    function application_preview()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Mtech'))
+        {
+            $info = $this->fetch_mtech_detail();
+            $info['print'] = 'N';
+            $this->load->view('admission/mtech/adm_mtech_application_preview', $info);
+            $this->load->view('admission/mtech/adm_mtech_application_download');
+        } 
+        else {
+            redirect('admission/mtech/Adm_mtech_registration/logout');
+        }
+    }
+
+    function application_download()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Mtech'))
+        {
+            $info = $this->fetch_mtech_detail();
+            $info['print'] = 'Y';
+            $html = $this->load->view('admission/mtech/adm_mtech_application_preview', $info, TRUE);
+            pdf_create($html, $registration_no."_Mtech_Application");
+        } 
+        else {
+            redirect('admission/mtech/Adm_mtech_registration/logout');
+        }
+    }
+
+    function payment_receipt()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Mtech'))
+        {
+            $data['application'] = $this->Mtech_all->get_application_details($registration_no);
+            $html = $this->load->view('admission/mtech/adm_mtech_payment_receipt', $data, TRUE);
+            pdf_create($html, $registration_no."_Mtech_Payment_Receipt");
+        } 
+        else {
+            redirect('admission/mtech/Adm_mtech_registration/logout');
+        }
+    }
+    public function fetch_mtech_detail()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Mtech'))
+        {
+            $data['application'] = $this->Mtech_all->get_application_details($registration_no);
+            $data['address'] = $this->Mtech_all->get_address($registration_no);
+            $data['fellowship'] = $this->Mtech_all->get_fellowship_details($registration_no);
+            $data['qulaification'] = $this->Mtech_all->get_qulaification_details($registration_no);
+            $data['program'] = $this->Mtech_all->get_program_details($registration_no);
+            $data['work_exp'] = $this->Mtech_all->get_work_exp_details($registration_no);
+            $data['doc'] = $this->Mtech_all->get_doc_path($registration_no);
+            $data['photo'] = $this->Mtech_all->get_photo_path($registration_no);
+            $data['sign'] = $this->Mtech_all->get_sign_path($registration_no);
+            $qrcode = $this->Mtech_all->get_qrcode_path($registration_no);
+            if ($qrcode == NULL && !empty($data['application'])) {
+                $data['qrcode'] = $this->qrcode_generate($data['application']);
+            } elseif ($qrcode != NULL) {
+                $data['qrcode'] = $qrcode[0]->doc_path;
+            } else {
+                $data['qrcode'] = '';
+            }
+
+            if ($data['work_exp']) {
+                $data['totalexp'] = 0;
+                foreach ($data['work_exp'] as $value) {
+                    $data['totalexp'] = $data['totalexp'] + $value->duration_in_month;
+                }
+            }
+            return $data;
+        } 
+        else {
+            redirect('admission/mtech/Adm_mtech_registration/logout');
+        }
+    }
+
+    public function qrcode_generate($info)
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Mtech'))
+        {
+            $this->load->library('ciqrcode');
+            $params['data']= $registration_no . ', ' .$info[0]->first_name . " " . $info[0]->middle_name . " " . $info[0]->last_name;
+           //$params['data'] = $info;
+            $params['level'] = 'H';
+            $params['size'] = 5;
+            $params['savename'] = FCPATH . 'assets/admission/mtech/' . $registration_no . '/qrcode' . $registration_no . '.png';
+            $this->ciqrcode->generate($params);
+            $email = $info[0]->email;
+            $this->Mtech_all->insert_qrcode($email, $registration_no);
+            return 'assets/admission/mtech/' . $registration_no . '/qrcode' . $registration_no . '.png';
+        } 
+        else {
+            redirect('admission/mtech/Adm_mtech_registration/logout');
+        }
+    }
+
+    public function totalexperincecount($work)
+    {
+        if (empty($work)) {
+            return false;
+        }
+        $date1 = "0001-11-30";
+        foreach ($work as $value) {
+            $vtotal = $date1;
+            $date3 = date_create($vtotal);
+            $t = date_create($value->to_date);
+            $j = date_create($value->from_date);
+            $interval = date_diff($j->setTime(24, 48, 0), $t->setTime(24, 48, 0));
+            $val = $interval->format("%Y Y, %M M, %d D");
+            $mont[] = $interval->format('%m');
+            $day[] = $interval->format('%d') + '1';
+            $yea[] = $interval->format('%y');
+        }
+        $totalsyerar = 0000;
+        $totalsmonth = 00;
+        $totalsdays = 00;
+        foreach ($yea as $year) {
+            $totalsyerar = $totalsyerar + $year;
+        }
+        foreach ($mont as $month) {
+            $totalsmonth = $totalsmonth + $month;
+        }
+        foreach ($day as $days) {
+            $totalsdays = $totalsdays + $days;
+        }
+        if ($totalsdays >= 30) {
+            $quotientd = (int)($totalsdays / 30);
+            $remainderd = $totalsdays % 30;
+            $totalsmonth = $totalsmonth + $quotientd;
+            $totalsdays = $remainderd;
+        }
+        if ($totalsmonth >= 12) {
+            $quotientm = (int)($totalsmonth / 12);
+            $remainderm = $totalsmonth % 12;
+            $totalsyerar = $totalsyerar + $quotientm;
+            $totalsmonth = $remainderm;
+        }
+        $val2 = $totalsyerar . " Y," . " " . $totalsmonth . " M," . " " . $totalsdays . " D";
+        return $val2;
+    }
+
+    public function get_doc_path($registration_no)
+    {
+        $query = $this->db->query("select d.*, m.description from adm_mtech_doc d inner join adm_mtech_doc_ms m
+            where d.registration_no ='" . $registration_no . "' and d.doc_id = m.doc_id ORDER BY m.id" );
+        if ($query->num_rows() > 0)
+            return $query->result();
+        else
+            return false;
+    }
+}

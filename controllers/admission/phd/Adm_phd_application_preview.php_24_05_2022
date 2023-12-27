@@ -1,0 +1,153 @@
+<?php defined('BASEPATH') or exit('No direct script access allowed');
+
+class Adm_phd_application_preview extends MY_Controller
+{
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->helper(array('dompdf', 'file'));
+        $this->load->model('admission/phd/Adm_phd_application_preview_model', 'Phd_all', TRUE);
+    }
+
+    function index()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+
+        if($registration_no && ($login_type =='Phd'))
+        {
+
+            $data['val'] = "home";
+            $data['application'] = $this->Phd_all->get_application_details($registration_no);
+            $data['program'] = $this->Phd_all->get_program_details($registration_no);
+            $data['tab_stat'] = $this->Phd_all->get_tab_status($registration_no);
+            // echo "<pre>";
+            // print_r($data);
+            // exit;
+            $this->Adm_phd_header($data);
+            // echo '<pre>';
+            // print_r($data);
+            // echo '</pre>';
+            //exit;
+            if ($data['application'][0]->payment_status == 'Y') {
+
+                // echo '<pre>';
+                // print_r($data);
+                // echo '</pre>';
+                $this->load->view('admission/phd/adm_phd_status_dashboard', $data);
+
+            } else {
+
+
+                redirect('admission/phd/Adm_phd_user_dashboard');
+            }
+            // $this->Adm_phd_footer();
+        }
+        else {
+            redirect('admission/phd/Adm_phd_registration/logout');
+        }
+    }
+
+
+    function application_preview()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Phd'))
+        {
+            $info = $this->fetch_Phd_detail();
+            $info['print'] = 'N';
+            // echo '<pre>';
+            // print_r($info);
+            // echo '</pre>';
+            // exit;
+            $this->load->view('admission/phd/adm_phd_application_preview', $info);
+            $this->load->view('admission/phd/adm_phd_application_download');
+        }
+        else {
+            redirect('admission/phd/Adm_phd_registration/logout');
+        }
+    }
+
+    function application_download()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Phd'))
+        {
+            $info = $this->fetch_Phd_detail();
+            $info['print'] = 'Y';
+            $html = $this->load->view('admission/phd/adm_phd_application_preview', $info, TRUE);
+            pdf_create($html, $registration_no."_Phd_Application");
+        }
+        else {
+            redirect('admission/phd/Adm_phd_registration/logout');
+        }
+    }
+
+    function payment_receipt()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Phd'))
+        {
+            $data['application'] = $this->Phd_all->get_application_details($registration_no);
+            $html = $this->load->view('admission/phd/adm_phd_payment_receipt', $data, TRUE);
+            pdf_create($html, $registration_no."_Phd_Payment_Receipt");
+        }
+        else {
+            redirect('admission/phd/Adm_phd_registration/logout');
+        }
+    }
+    public function fetch_Phd_detail()
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Phd'))
+        {
+            $data['application'] = $this->Phd_all->get_application_details($registration_no);
+            $data['address'] = $this->Phd_all->get_address($registration_no);
+            $data['fellowship'] = $this->Phd_all->get_fellowship_details($registration_no);
+            $data['qulaification'] = $this->Phd_all->get_qulaification_details($registration_no);
+            $data['program'] = $this->Phd_all->get_program_details($registration_no);
+            $data['work_exp'] = $this->Phd_all->get_work_exp_details($registration_no);
+            $data['photo'] = $this->Phd_all->get_photo_path($registration_no);
+            $data['sign'] = $this->Phd_all->get_sign_path($registration_no);
+            $qrcode = $this->Phd_all->get_qrcode_path($registration_no);
+            if ($qrcode == NULL && !empty($data['application'])) {
+                $data['qrcode'] = $this->qrcode_generate($data['application']);
+            } elseif ($qrcode != NULL) {
+                $data['qrcode'] = $qrcode[0]->doc_path;
+            } else {
+                $data['qrcode'] = '';
+            }
+            return $data;
+        }
+        else {
+            redirect('admission/phd/Adm_phd_registration/logout');
+        }
+    }
+
+    public function qrcode_generate($info)
+    {
+        $registration_no= $this->session->userdata('registration_no');
+        $login_type = $this->session->userdata('login_type');
+        if($registration_no && ($login_type =='Phd'))
+        {
+            $this->load->library('ciqrcode');
+            $params['data']= $registration_no . ', ' .$info[0]->first_name . " " . $info[0]->middle_name . " " . $info[0]->last_name;
+           //$params['data'] = $info;
+            $params['level'] = 'H';
+            $params['size'] = 5;
+            $params['savename'] = FCPATH . 'assets/admission/phd/' . $registration_no . '/qrcode' . $registration_no . '.png';
+            $this->ciqrcode->generate($params);
+            $email = $info[0]->email;
+            $this->Phd_all->insert_qrcode($email, $registration_no);
+            return 'assets/admission/phd/' . $registration_no . '/qrcode' . $registration_no . '.png';
+        }
+        else {
+            redirect('admission/phd/Adm_phd_registration/logout');
+        }
+    }
+}

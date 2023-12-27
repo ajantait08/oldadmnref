@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MBA Application</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <style>
+        body {
+            font-family: Verdana, dejvu sans, sans-serif;
+            font-size: 1rem;
+            page-break-inside: avoid;
+            <?php if ($print == 'Y') { ?>font-size: 0.625rem;
+            <?php } ?>
+        }
+
+        @page {
+            margin: .4cm .1cm 0.2cm .6cm;
+        }
+
+        @media screen,
+        print {
+
+            body {
+                line-height: 1.2;
+            }
+        }
+
+        .headingforms {
+            font-size: 1.475rem;
+        }
+
+        .imagephoto {
+            height: auto;
+            width: 7.875rem;
+        }
+
+        .imgsig {
+            height: 1.875rem;
+            width: 7.875rem;
+        }
+
+        .imageqr {
+            height: 114px;
+            width: 120px;
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .ex1 {
+            text-align: justify;
+            page-break-inside: avoid;
+            padding: 1px 3px;
+        }
+
+        table,
+        th,
+        td {
+            padding: 1px;
+            page-break-inside: avoid;
+        }
+
+        .mtech {
+            border: 1px solid black;
+            border-collapse: collapse;
+            border-spacing: 0;
+            page-break-inside: avoid;
+        }
+
+        .mtech td,
+        th {
+            border: 1px solid black;
+        }
+
+        .mtech th {
+            border: 1px solid black;
+            text-align: justify;
+        }
+
+        .mtech-nb {
+            border: none;
+            width: 100%;
+            page-break-inside: avoid;
+        }
+
+        .mtech-nb td,
+        th {
+            border: none;
+            vertical-align: top;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page" width="8.3 inches" height="11.7 inches" align="center">
+        <table class="mtech" style="margin: 0.01in 0.01in 0.01in 0.01in; width:80%" align="center">
+            <tr>
+                <td style="width:10%" align="center">
+                    <img class="imageqr" src="<?php echo base_url(); ?>assets/img/ismlogo.png" />
+                </td>
+                <td class="headingforms" style="width:80%" align="center">
+                    <b>Indian Institute of Technology (Indian School of Mines) Dhanbad</b><br />
+                    Online Application Form for MBA Admission 2023<br /><br />
+                    <b>Online Registration Form No. -
+                        <?php if (!empty($application[0]->registration_no)) {
+                            echo $application[0]->registration_no;
+                        } ?>
+                    </b>
+                </td>
+                <td style="width:10%" align="center">
+                    <?php if (!empty($qrcode)) { ?>
+                        <img class="imageqr" src="<?php echo base_url(); ?><?php echo $qrcode; ?>" />
+                    <?php } ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <table class="mtech-nb">
+                        <tr>
+                            <td colspan=3>
+                                <table class="mtech-nb">
+                                    <tr>
+                                        <td>
+                                            <b>Applicant's Name:</b><br>
+                                            <?php if (!empty($application[0]->first_name)) {
+                                                echo $application[0]->first_name . " " . $application[0]->middle_name . " " . $application[0]->last_name;
+                                            } ?>
+                                        </td>
+                                        <td>
+                                            <b>Applicant's Mobile Number:</b><br>
+                                            <?php if (!empty($application[0]->mobile)) {
+                                                echo $application[0]->mobile;
+                                            } ?>
+                                        </td>
+                                        <td>
+                                            <b>Email Id:</b><br>
+                                            <?php if (!empty($application[0]->email)) {
+                                                echo $application[0]->email;
+                                            } ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Parent/Guardian's Name:</b><br>
+                                            <?php if (!empty($application[0]->guardian_name)) {
+                                                echo $application[0]->guardian_name;
+                                            } ?>
+                                        </td>
+                                        <td>
+                                            <b>Relationship of Parent/Guardian:</b><br>
+                                            <?php if (!empty($application[0]->guardian_realtion)) {
+                                                echo $application[0]->guardian_realtion;
+                                            } ?>
+                                        </td>
+                                        <td>
+                                            <b>Guardian's Mobile Number:</b><br>
+                                            <?php if (!empty($application[0]->guardian_mobile)) {
+                                                echo $application[0]->guardian_mobile;
+                                            } ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Date of Birth:</b><br>
+                                            <?php if (!empty($application[0]->dob)) {
+                                                echo date("d-m-Y", strtotime($application[0]->dob));
+                                            } ?>
+                                        </td>
+                                        <td>
+                                            <b>Gender:</b><br>
+                                            <?php if (!empty($application[0]->gender)) {
+                                                echo $application[0]->gender;
+                                            } ?>
+                                        </td>
+                                        <td>
+                                            <b>Nationality:</b><br>
+                                            <?php if (!empty($application[0]->nationality)) {
+                                                echo $application[0]->nationality;
+                                            } ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Category:</b><br>
+                                            <?php if (!empty($application[0]->category)) {
+                                                echo $application[0]->category;
+                                            } ?>
+                                        </td>
+                                        <td><b>Religion:</b><br>
+                                            <?php if (!empty($application[0]->religion)) {
+                                                echo $application[0]->religion;
+                                            } ?>
+                                        </td>
+                                        <td><b>PWD:</b><br>
+                                            <?php if (!empty($application[0]->pwd) && $application[0]->pwd == 'Y') {
+                                                echo "Yes";
+                                            } elseif (!empty($application[0]->pwd) && $application[0]->pwd == 'N') {
+                                                echo "No";
+                                            } ?>
+                                        </td>
+                                    </tr>
+                                    <?php if($application[0]->category=='OBC' || $application[0]->category=='EWS' ) {?>
+                                        <tr>
+                                            <td><b>Date of Issuance of <br>caste certificate(OBC-NCL/EWS):</b><br></td>
+                                            <td>
+                                            <?php if (!empty($application[0]->ews_obc_doc_date)) {
+                                                echo $application[0]->ews_obc_doc_date;
+                                            } ?>
+                                        </td>
+                                        </tr>
+                                    <?php }?>
+                                </table>
+                            </td>
+                            <td align="center">
+                                <div>
+                                    <?php if (!empty($photo)) { ?>
+                                        <img class="imagephoto" src="<?php echo base_url(); ?><?php echo $photo[0]->doc_path; ?>" />
+                                    <?php } ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Registration No.:</b>&nbsp;&nbsp;
+                                <?php if (!empty($application[0]->registration_no)) {
+                                    echo $application[0]->registration_no;
+                                } ?>
+                            </td>
+                            <td><b>Registration Date:</b>&nbsp;&nbsp;
+                                <?php if (!empty($application[0]->created_time)) {
+                                    echo date("d-m-Y", strtotime($application[0]->created_time));
+                                } ?>
+                            </td>
+                            <td>
+                                <?php if ($print == 'Y') { ?>
+                                    <b>Print Date:</b>&nbsp;&nbsp;
+                                <?php echo date("Y-m-d h:i:sa", time());
+                                } ?>
+                            </td>
+                            <td align="center">
+                                <div>
+                                    <?php if (!empty($sign)) { ?>
+                                        <img class="imgsig" src="<?php echo base_url(); ?><?php echo $sign[0]->doc_path; ?>" />
+                                    <?php } ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>Programs Applied For: </b>
+                            </td>
+                            <td colspan=3>
+                                <?php if (!empty($program)) {
+                                    $i = 1; ?>
+                                    <?php foreach ($program as $prgm) { ?>
+                                        <span style="margin-right: 3rem;">
+                                            <?php echo $i; ?>. <?php echo $prgm->program_desc . "(" . strtoupper($prgm->program_id) . ")"; ?>
+                                        </span>
+                                    <?php $i++;
+                                    } ?>
+
+                                <?php } else { ?>
+                                    <b>You have not yet applied for any program</b>
+                                <?php }
+                                ?>
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                    <!-- <table class="mtech-nb">
+                        <tr>
+                            <td style="width:70%">
+                                <b>Do you have B.Tech degree from IIT with 8.0 CGPA out of 10?:</b>&nbsp;
+                                <?php if (!empty($application[0]->betch_iit) && $application[0]->betch_iit == 'Y') {
+                                    echo "Yes";
+                                } else {
+                                    echo "No";
+                                } ?>
+                            </td>
+                            <td style="width:30%">
+                                <?php if (!empty($application[0]->betch_iit) && $application[0]->betch_iit == 'Y') { ?>
+                                    <b>Name of IIT:</b>&nbsp;
+                                    <?php if (!empty($application[0]->betch_iit_name)) {
+                                        echo $application[0]->betch_iit_name;
+                                    } ?>
+                                <?php } ?>
+                            </td>
+
+                        </tr>
+                    </table> -->
+
+                    <?php if (!empty($fellowship[0])) { ?>
+                        <table class="mtech-nb">
+                            <tr>
+                                <td style="width:30%">
+                                    CAT 2022 REGISTRATION NO.:
+                                </td>
+                                <td style="width:20%">
+                                    <?php if (!empty($fellowship[0]->cat_reg_no)) {
+                                        echo $fellowship[0]->cat_reg_no;
+                                    } ?>
+                                </td>
+                                <td style="width:30%"></td>
+                                <td style="width:20%"></td>
+                            </tr>
+                            <tr>
+                                <td style="width:30%">
+                                    CAT Percentile:
+                                </td>
+                                <td style="width:20%">
+                                    <?php if (!empty($fellowship[0]->cat_percentile)) {
+                                        echo $fellowship[0]->cat_percentile;
+                                    } ?>
+                                </td>
+                                <td style="width:30%">
+                                    CAT Score:
+                                </td>
+                                <td style="width:20%">
+                                    <?php if (!empty($fellowship[0]->cat_score)) {
+                                        echo $fellowship[0]->cat_score;
+                                    } ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:30%">
+                                    CAT Quantitative Percentile:
+                                </td>
+                                <td style="width:20%">
+                                    <?php if (!empty($fellowship[0]->cat_quant_percentile)) {
+                                        echo $fellowship[0]->cat_quant_percentile;
+                                    } ?>
+                                </td>
+                                <td style="width:30%">
+                                    CAT Quantitative Score:
+                                </td>
+                                <td style="width:20%">
+                                    <?php if (!empty($fellowship[0]->cat_quant_score)) {
+                                        echo $fellowship[0]->cat_quant_score;
+                                    } ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:30%">
+                                    CAT Verbal Percentile:
+                                </td>
+                                <td style="width:20%">
+                                    <?php if (!empty($fellowship[0]->cat_verb_percentile)) {
+                                        echo $fellowship[0]->cat_verb_percentile;
+                                    } ?>
+                                </td>
+                                <td style="width:30%">
+                                    CAT Verbal Score:
+                                </td>
+                                <td style="width:20%">
+                                    <?php if (!empty($fellowship[0]->cat_verb_score)) {
+                                        echo $fellowship[0]->cat_verb_score;
+                                    } ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    CAT Data Interpretation Percentile:
+                                </td>
+                                <td>
+                                    <?php if (!empty($fellowship[0]->cat_dis_percentile)) {
+                                        echo $fellowship[0]->cat_dis_percentile;
+                                    } ?>
+                                </td>
+                                <td>
+                                    CAT Data Interpretation Score:
+                                </td>
+                                <td>
+                                    <?php if (!empty($fellowship[0]->cat_dis_score)) {
+                                        echo $fellowship[0]->cat_dis_score;
+                                    } ?>
+                                </td>
+                            </tr>
+                        </table>
+                    <?php } ?>
+                    <br>
+                    <?php if (!empty($qulaification)) { ?>
+                        <p class="ex1"><b>ACADEMIC DETAILS</b></p>
+                        <table class="mtech" style="width:100%">
+                            <tr>
+                                <th>Exam Type</th>
+                                <th>Name Of Exam</th>
+                                <th>Institute / University Name</th>
+                                <th>Result Status</th>
+                                <th>Marks System</th>
+                                <th>Passing Year</th>
+                                <th>Percentage/ CGPA</th>
+                            </tr>
+                            <?php
+                            foreach ($qulaification as $qlf) { ?>
+                                <tr>
+                                    <td><?php if (!empty($qlf->exam_type)) {
+                                            echo $qlf->exam_type;
+                                        } ?>
+                                    </td>
+                                    <td><?php if (!empty($qlf->exam_name)) {
+                                            echo $qlf->exam_name;
+                                        } ?>
+                                    </td>
+                                    <td><?php if (!empty($qlf->institue_name)) {
+                                            echo $qlf->institue_name;
+                                        } ?>
+                                    </td>
+                                    <td><?php if (!empty($qlf->result_status)) {
+                                            echo $qlf->result_status;
+                                        } ?>
+                                    </td>
+                                    <td><?php if (!empty($qlf->marks_perc_type)) {
+                                            echo $qlf->marks_perc_type;
+                                        } ?>
+                                    </td>
+                                    <td><?php if (!empty($qlf->year_of_passing)) {
+                                            echo $qlf->year_of_passing;
+                                        } ?>
+                                    </td>
+                                    <td><?php if (!empty($qlf->mark_cgpa_percenatge)) {
+                                            echo $qlf->mark_cgpa_percenatge;
+                                        } ?>
+                                    </td>
+                                </tr>
+                            <?php
+                            } ?>
+                        </table>
+                    <?php } ?>
+                    <br>
+                    <br>
+                    <?php if (!empty($inteview_location)) { ?>
+                        <p class="ex1"><b>Interview Priority location</b></p>
+                        <p>NOTE: Final decision of the interview location will be based on the MBA admission committee.</p>
+                        <table class="mtech" style="width:100%">
+                            <tr>
+                                <th>Priority 1</th>
+                                <th>Priority 2</th>
+                                <th>Priority 3</th>
+                                
+                            </tr>
+                            <?php
+                            foreach ($inteview_location as $qlf) { ?>
+                                <tr>
+                                    <td><?php if (!empty($qlf->priority1)) {
+                                            echo $qlf->priority1;
+                                        } ?>
+                                    </td>
+                                    <td><?php if (!empty($qlf->priority2)) {
+                                            echo $qlf->priority2;
+                                        } ?>
+                                    </td>
+                                    <td><?php if (!empty($qlf->priority3)) {
+                                            echo $qlf->priority3;
+                                        } ?>
+                                    </td>
+                                    
+                                </tr>
+                            <?php
+                            } ?>
+                        </table>
+                    <?php } ?>
+                    <br>
+                    <?php if (!empty($work_exp)) { ?>
+                        <p class="ex1"><b>WORK EXPERIENCE DETAILS:</b></p>
+                        <table class="mtech" style="width:100%">
+                            <tr>
+                                <th>Designation</th>
+                                <th>Organization</th>
+                                <th>Nature of Work</th>
+                                <th>Duration (In Months)</th>
+                                <!-- <th>From Date</th>
+                                <th>To Date</th> -->
+                                <th>Sector</th>
+                            </tr>
+                            <?php
+                            foreach ($work_exp as $work) { ?>
+                                <tr>
+                                    <td>
+                                        <?php if (!empty($work->designation_no)) {
+                                            echo $work->designation_no;
+                                        } ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($work->designation_organistion)) {
+                                            echo $work->designation_organistion;
+                                        } ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($work->nature_of_work)) {
+                                            echo $work->nature_of_work;
+                                        } ?>
+                                    </td>
+                                    <!-- <td>
+                                        <?php if (!empty($work->from_date)) {
+                                            echo date("d-m-Y", strtotime($work->from_date));
+                                        } ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($work->to_date)) {
+                                            echo date("d-m-Y", strtotime($work->to_date));
+                                        } ?>
+                                    </td> -->
+                                    <td>
+                                        <?php
+                                        if (!empty($work->duration_in_month)) {
+                                            echo $work->duration_in_month . " Months";
+                                        } ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($work->sector)) {
+                                            echo $work->sector;
+                                        } ?>
+                                    </td>
+                                </tr>
+                            <?php
+                            } ?>
+                        </table>
+                        <table class="mtech-nb">
+                            <tr>
+                                <td>
+                                    <b>Total Experience (in months):</b>
+                                </td>
+                                <td>
+                                    <b>
+                                        <?php if (!empty($totalexp)) {
+                                            echo $totalexp . " Months";
+                                        } ?>
+                                    </b>
+                                </td>
+                            </tr>
+                        </table>
+                    <?php } ?>
+
+                    <table class="mtech-nb" style="width:100%;" vertical-align="top">
+                        <tr>
+                            <td style="width:33.33%">
+                                <p class="ex1"><b>Correspondence Address</b></p>
+                                <table class="mtech-nb">
+                                    <?php
+                                    foreach ($address as $adrs) { ?>
+                                        <?php if ($adrs->address_type == 'C') { ?>
+                                            <tr>
+                                                <td>
+                                                    Address:
+                                                </td>
+                                                <td><?php if (!empty($adrs->line_1)) {
+                                                        echo $adrs->line_1;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td><?php if (!empty($adrs->line_2)) {
+                                                        echo $adrs->line_2;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td><?php if (!empty($adrs->line_3)) {
+                                                        echo $adrs->line_3;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    City:
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($adrs->city)) {
+                                                        echo $adrs->city;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    State:
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($adrs->state)) {
+                                                        echo $adrs->state;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Pin Code:
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($adrs->pincode)) {
+                                                        echo $adrs->pincode;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                    <?php
+                                    } ?>
+                                </table>
+                            </td>
+                            <td style="width:33.33%">
+                                <p class="ex1"><b>Permanent Address</b></p>
+                                <table class="mtech-nb">
+                                    <?php
+                                    foreach ($address as $adrs) { ?>
+                                        <?php if ($adrs->address_type == 'P') { ?>
+                                            <tr>
+                                                <td>
+                                                    Address:
+                                                </td>
+                                                <td><?php if (!empty($adrs->line_1)) {
+                                                        echo $adrs->line_1;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td><?php if (!empty($adrs->line_2)) {
+                                                        echo $adrs->line_2;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td><?php if (!empty($adrs->line_3)) {
+                                                        echo $adrs->line_3;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    City:
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($adrs->city)) {
+                                                        echo $adrs->city;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    State:
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($adrs->state)) {
+                                                        echo $adrs->state;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Pin Code:
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($adrs->pincode)) {
+                                                        echo $adrs->pincode;
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                    <?php
+                                    } ?>
+                                </table>
+                            </td>
+                            <td style="width:33.33%">
+                                <p class="ex1"><b>Documents Uploaded</b></p>
+                                <table class="mtech-nb">
+                                    <?php foreach ($doc as  $document) {
+                                        if (($document->description == 'Photo') || ($document->description == 'Signature') || ($document->description == 'QRCode')) {
+                                            continue;
+                                        } else { ?>
+                                            <tr>
+                                                <td>
+                                                    <?php echo $document->description; ?>
+                                                </td>
+                                            </tr>
+                                    <?php }
+                                    } ?>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="mtech-nb">
+                        <tr>
+                            <td style="width:10%">
+                                <b>PAYMENT:: </b>
+                            </td>
+                            <td style="width:90%">                                
+                                <b>ORDERID ::</b> <?php if (!empty($application[0]->order_id)) {
+                                                echo $application[0]->order_id;
+                                            } ?>
+                                <b>TRANSACTIONID::</b> <?php if (!empty($application[0]->transaction_id)) {
+                                                    echo $application[0]->transaction_id;
+                                                } ?>
+                                <br />
+                                <b>PAID AMOUNT::</b> <?php if (!empty($application[0]->payment_amount)) {
+                                                    echo $application[0]->payment_amount;
+                                                } ?>
+                                <b>TRANSACTION DATE::</b> <?php if (!empty($application[0]->payment_date_time)) {
+                                                        echo date("d-m-Y", strtotime($application[0]->payment_date_time));
+                                                    } ?>
+                                <b>PAYABLE AMOUNT::</b> <?php if (!empty($application[0]->application_fee)) {
+                                                            echo $application[0]->application_fee;
+                                                        } ?>                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p class="ex1">
+                                    <B>Declaration:</B>
+                                </P>
+                                <p class="ex1">
+                                I hereby declare that I have read and understood the conditions of eligibilty for 2 Years MBA / MBA 
+                                in Business Analytics admission 2023. I fulfill the minimum eligibility criteria and I have provided 
+                                the necessary information in this regard. In the event of the information being found incorrect or 
+                                misleading, my candidature shall be liable to cancellation at any time. Further, I have carefully 
+                                read all the instructions and I accept them and shall not raise any dispute in future over the same.
+                                 <br><br>
+                                I ,hereby, give my consent to make some or all my data in IITISM website and various other portals of 
+                                IITISM as and when required by IITISM.
+                                </p>
+                                <br />
+                                <p align="center">(Signature of the Candidate)</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

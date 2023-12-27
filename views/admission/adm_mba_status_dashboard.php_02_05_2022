@@ -1,0 +1,368 @@
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Roboto');
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .palel-primary {
+        border-color: #5161ce;
+    }
+
+    .panel-primary>.panel-heading {
+        text-align: center;
+        background: #5161ce;
+
+    }
+
+    .panel-primary>.panel-body {
+        background-color: #EDEDED;
+    }
+
+    marquee {
+        font-size: 15px;
+        font-weight: 300;
+        color: #ff5200;
+        font-family: sans-serif;
+    }
+
+    .news_back {
+        border-radius: 5px;
+        border: solid 1px #ccc;
+        box-shadow: 1px 2px 5px rgba(0, 0, 0, .31);
+        background: #ebebeb;
+    }
+    
+    ol {
+        margin-left:1rem;
+        width:90%;
+    }
+
+    li {
+        margin:1rem;
+        text-align:left;
+    }
+
+    table {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: fixed;
+        margin: 50px auto;
+    }
+    table tr {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        padding: .35em;
+    }
+
+    table td {
+        background: #EDEDED;
+    }
+
+    table th, td {
+        padding: .625rem;
+        font-size: 1.15rem;
+        letter-spacing: .0625rem;
+        border: 1px solid #ccc;
+        text-align: center;
+    }
+
+    table th {
+        text-transform: uppercase;
+        background: #5161ce;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    @media screen and (max-width: 1370px) {
+        table {
+            border: 0;
+        }
+
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        table tr {
+            display: block;
+            margin-bottom: .625em;
+        }
+        
+        table td {
+            display: block;
+            font-size: .8em;
+            text-align: right;
+        }
+        
+        table td::before {
+            content: attr(data-label) ;
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    }
+
+    .blink {
+        animation: blinker 0.6s linear infinite;
+        color: #1c87c9;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: sans-serif;
+      }
+      @keyframes blinker {
+        50% {
+          opacity: 0;
+        }
+      }
+      .blink-one {
+        animation: blinker-one 1s linear infinite;
+        color: #1c87c9;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: sans-serif;
+      }
+      @keyframes blinker-one {
+        0% {
+          opacity: 0;
+        }
+      }
+      .blink-two {
+        animation: blinker-two 1.4s linear infinite;
+      }
+      @keyframes blinker-two {
+        100% {
+          opacity: 0;
+        }
+      }
+</style>
+<?php 
+if(!($this->session->has_userdata('login_type'))) {
+redirect('admission/Add_mba/adm_mba_login');
+} ?>
+<div class="row">
+    <div class="col-sm-2 col-md-2 col-lg-2">
+        <div class="notice">
+            <div class="row">
+                <!-- <div class="col-md-12">
+                    <div class="panel panel-primary news_back">
+                        <div class="panel-heading">
+                        </div>
+                        <div class="panel-body">
+                            <marquee behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">Candidates can now check their admission status.</marquee>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="info">
+            <div class="row">
+                <div class="col-md-12 col-lg-12 col-sm-12">
+                    <div class="panel panel-primary news_back">
+                        <div class="panel-heading">Activity 
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-lg-12">
+                                    <!-- <button class="btn btn-info" style="width:100%;"><a href="<?php echo base_url() ?>index.php/admission/Adm_mba_application_preview/"><b style="text-decoration: none; color: white;">My Application Status</b></a> </button> -->
+                                    <input class="btn btn-danger" style="width:100%;" type="button" onclick="location.href='<?php echo base_url() ?>'+'index.php/admission/Adm_registration/logout'" value="Logout"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8 col-md-8 col-lg-8">
+        <div class="home">
+            <div class="row">
+                <div class="col-md-12 col-lg-12 col-sm-12">
+                    <div class="panel panel-primary news_back">
+                        <div class="panel-heading">MBA Application Status
+                        </div>
+                        <div class="panel-body">
+                            <section>
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-lg-12">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Sl. No.</th>
+                                                    <th scope="col">Registration No.</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Program Name</th>
+                                                    <th scope="col">Payment Status</th>
+                                                    <th scope="col">Application Status</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (!empty($application)) {
+                                                    $i = 1;
+                                                    foreach ($application as $appl) {
+                                                ?>
+                                                        <tr>
+                                                            <td  data-label="Sl. No."><?php echo $i; ?></td>
+                                                            <td data-label="Registration No."><?php echo $appl->registration_no ?></td>
+                                                            <td data-label="Name"><?php echo $appl->first_name . " " . $appl->middle_name . " " . $appl->last_name; ?></td>
+                                                            <td data-label="Program Name">
+                                                                <?php if (!empty($program)) { ?><br>
+                                                                    <ol>
+                                                                        <?php foreach ($program as $prgm) { ?>
+                                                                            <li>
+                                                                                <?php echo $prgm->program_desc . "(" . strtoupper($prgm->program_id) . ")"; ?> 
+                                                                            </li>
+                                                                        <?php } ?>
+                                                                    </ol>
+                                                                <?php } else { ?>
+                                                                    <b>You have not yet applied for any program</b>
+                                                                <?php }
+                                                                ?>
+                                                            </td>
+                                                            <?php if ($appl->payment_status == 'Y') { ?>
+                                                                <td data-label="Payment Status" style="color:green;"><?php echo "Completed" ?></td>
+                                                            <?php } else { ?>
+                                                                <td data-label="Payment Status" style="color:red;"><button class="btn btn-sm btn-danger"><?php echo "Not Completed"; ?></td>
+                                                            <?php }
+                                                            ?>
+                                                            <?php if (!empty($appl->status)) { ?>
+                                                                <?php if ($appl->status == 'PF') { ?>
+                                                                    <td data-label="Application Status" style="color:yellow;">Partially Filled</td>
+                                                                <?php } elseif ($appl->status == 'DU') { ?>
+                                                                    <td data-label="Application Status" style="color:blue;">Document Uploaded</td>
+                                                                <?php } elseif ($appl->status == 'PD') { ?>
+                                                                    <td data-label="Application Status" style="color:green;">Applied</td>
+                                                                <?php } else { ?>
+                                                                    <td data-label="Application Status" style="color:red;">Registered</td>
+                                                            <?php }
+                                                            } else { ?>
+                                                                <td data-label="Application Status" style="color:red;">Registered</td>
+                                                            <?php } ?>
+                                                            <?php if ($tab_stat[0]->tab_status == 0) { ?>
+                                                                <td data-label="Action"><button class="btn btn-sm">----</button></td>
+                                                            <?php } else { ?>
+                                                                <td data-label="Action">
+                                                                    <a href="<?php echo base_url(); ?>index.php/admission/Adm_mba_application_preview/application_preview" target="_blank"><button class="btn btn-sm  btn-primary">Preview</button></a><br/><br/>
+                                                                    <a href="<?php echo base_url(); ?>index.php/admission/Adm_mba_application_preview/payment_receipt"><button class="btn btn-sm btn-info">Payment Receipt</button></a><br/><br/>
+                                                                    <a href="<?php echo base_url();?>index.php/admission/Adm_mba_application_preview/downloadpdf"><button class="btn btn-sm  btn-success">Download Documents</button></a><br/>
+                                                                </td>
+                                                            <?php }
+                                                            ?>
+                                                        
+                                                            </tr>
+                                                            
+                                                <?php $i++;
+                                                    }
+                                                } ?>
+                                            </tbody>
+                                        </table>   
+                                        <center>
+                                            <div>
+                                                <?php if (!empty($program)) {   $j=1; ?>
+                                                    
+                                                    <?php foreach ($program as $prgm) { 
+                                                        
+                                                        if($prgm->admin_decision_status=='CI')
+                                                        {
+                                                        ?>
+                                                            <?php echo  $j.". ".$prgm->program_desc . "(" . strtoupper($prgm->program_id) . ")"; ?> <p class="blink-one"><?php echo "Call For interview"; ?></p> 
+                                                                
+                                                        
+                                                    <?php } $j++;} ?>
+                                                    
+                                                <?php } ?>
+                                            </div>
+                                        <center>  
+                                            <?php if(!empty($pay))
+                                              { ?>
+                                                 <input class="btn btn-primary" type="button" onclick="location.href='<?php echo base_url() ?>'+'index.php/admission/Adm_mba_admisison_payment/adm_mba_payment'" value="Admission Payment"/>
+                                                 
+                                              <?php }
+                                            ?>
+                                        <!-- start --> 
+                                            <?php if (!empty($program)) {  
+                                                $interview='';
+                                                $j=1; ?>   
+                                                    <?php foreach ($program as $prgm) { 
+                                                        
+                                                        if($prgm->admin_decision_status=='CI')
+                                                        {
+                                                            $interview='yes';
+                                                        ?>
+                                                            
+                                                                
+                                                        
+                                                    <?php } $j++;} ?>     
+                                                <?php 
+                                            } ?>
+
+                                        <?php if(!empty($interview)){ ?>
+                                        <div class="panel panel-primary news_back">
+                                           
+                                            <div class="panel-body">
+                                                <div class="page_content"> 
+                                                    <p style="text-align: justify;margin-left: 50px;"><span style="font-size: 16px;"><strong style="color: black;">Congratulations on being shortlisted for the Online Interview Process for admission to MBA and/or MBA in Business Analytics Programme in IIT(ISM) Dhanbad. Please follow the following instructions and bring the documents as <br>mentioned below for the online interview process:</strong></span></p>
+                                                    <p style="text-align: center;margin-left: 50px;"><span style="font-size: 18px;"><strong>Instructions for Online Interview Process</strong></span></p>
+                                                    <ol style="margin-left: 19px;">
+                                                    <li><span style="font-size: 16px;">The online interview is scheduled from 26th March to 31st March 2022. The exact date and time will be notified to you soon via email. </span></li>
+                                                    <li><span style="font-size: 16px;">The candidate has to report in the zoom waiting room by clicking the zoom link provided by the institute 15 minutes before the scheduled time.</span></li>
+                                                    <li><span style="font-size: 16px;">The candidates will be interviewed in online mode through zoom and the video of the candidate must be ON during the interview.</span></li>
+                                                    <li><span style="font-size: 16px;">The candidate must display his/her name and registration in the format “Name in Application Form (Application No.)” eg. Anshul Tiwari (IITISMMBA2200001) while login in to Zoom. The candidate shall not be allowed to attend the interview if any other unusual names are used.</span></li>
+                                                    <li><span style="font-size: 16px;">The zoom link for appearing in the interview process will be sent two days in advance.</span></li>
+                                                    <li><span style="font-size: 16px;">You have to produce the following original documents for verification by the panel members:</span>
+                                                    <ul style="list-style-type: none;">
+                                                        <li><span style="font-size: 16px;">a.  CAT scorecard;</span>
+                                                        <li><span style="font-size: 16px;">b.  X marks sheet;</span>
+                                                        <li><span style="font-size: 16px;">c.  XII marks sheet;</span>
+                                                        <li><span style="font-size: 16px;">d.  Graduation marks sheet with subjects names and degree certificate for passed candidate and marks sheet with subjects names till last semester/year as applicable for appearing candidates;</span>
+                                                        <li><span style="font-size: 16px;">e.  Proof of Mathematics/Statistics as one of the subjects in the graduation (marks sheet to be provided) in MBA Programme;</span>
+                                                        <li><span style="font-size: 16px;">f.  Proof of B.Tech degree (marks sheet to be provided) for MBA in Business Analytics Programme;</span>
+                                                        <li><span style="font-size: 16px;">g.  SC/ST/EWS/OBC(NC)/PwD latest certificate if applicable issued by competent authority and format as issued by GOI;</span>
+                                                        <li><span style="font-size: 16px;">h.  Proof of industrial experience in months (appointment letter and last month salary certificate to be provided). If worked in multiple organizations, appointment letter and resignation letter of all previous organizations along with appointment letter and salary certificate of last month for the currently employed organization.</span>
+                                                    </ul>
+                                                    </li>
+                                                   
+                                                    </ol>
+                                                    
+                                                    <p style="text-align: justify;margin-left: 50px;"><span style="font-size: 16px;"><strong style="color: black;">Note: If the candidate fails to provide any of the above mentioned marks sheet/certificate/letter as applicable during the interview process, the candidature will be immediately rejected.</strong></span></p>
+                                                </div>
+                                            
+                                            </div> <!-- panel body end  -->
+                                        </div>  <!-- panel end  -->  
+                                        
+                                        <?php } ?>
+                                          
+                                        <!-- end -->                           
+                                    </div>
+                                    
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="notice">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary news_back">
+                        <div class="panel-heading">Applicant home
+                        </div>
+                        <div class="panel-body">
+                          <input class="btn btn-info" style="width:100%;" type="button" onclick="location.href='<?php echo base_url() ?>'+'index.php/admission/Adm_mba_applicant_home'" value="Back applicant home" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
